@@ -15,7 +15,7 @@ set(0, 'DefaultFigureVisible', 'off');
 
 Lx = 44;
 Ly = 42;
-n = 1000;
+n = 100;
 begini = 1;
 endi = 1;
 
@@ -63,16 +63,20 @@ xyz(:,1) = xyz(:,1)*(boxsize(1,2)-boxsize(1,1))+boxsize(1,1);
 xyz(:,2) = xyz(:,2)*(boxsize(2,2)-boxsize(2,1))+boxsize(2,1);
 xyz(:,3) = xyz(:,3)*(boxsize(3,2)-boxsize(3,1))+boxsize(3,1);
 
-ZI = griddata(xyz(:,1),xyz(:,2),xyz(:,3),XI,YI);
-% ZI = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'cubic');
-% ZI = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'natural');
-% ZI = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'v4');
-% ��nearest�NaN
-nan_mask = isnan(ZI);
-if sum(nan_mask(:)) > 0
-    ZI_nearest = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'nearest');
-    ZI(nan_mask) = ZI_nearest(nan_mask);
+fprintf('Starting griddata interpolation...\n');
+tic;
+
+% 尝试不同的插值方法
+try
+    ZI = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'linear');
+catch
+    fprintf('Linear interpolation failed, trying nearest...\n');
+    ZI = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'nearest');
 end
+
+interpolation_time = toc;
+fprintf('Griddata completed in %.2f seconds\n', interpolation_time);
+
 
 fig = figure('Visible','off');
 surf(XI,YI,ZI);
