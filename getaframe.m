@@ -15,7 +15,7 @@ output_file = 'alastframe.lammpstrj'
 fid_output = fopen(output_file, 'w+');
 if fid_output == -1
     fclose(fid_input);
-    error('Cannot create output file: %s', output_file);s
+    error('Cannot create output file: %s', output_file);
 end
 
 try
@@ -40,13 +40,29 @@ try
     
     fprintf('Successfully extracted %d lines to %s\n', line_count, output_file);
 catch ME
-	fclose(fid_input);
-	fclose(fid_output);
-	rethrow(ME);
-    
+    % 只有出错时才执行这里
+    if fid_input > 0
+        fclose(fid_input);
+    end
+    if fid_output > 0
+        fclose(fid_output);
+    end
+    rethrow(ME);  % 重新抛出错误
 end
 fclose(fid_input);
 fclose(fid_output);
 
 fprintf('Process completed successfully.\n');
 end
+
+
+try
+    % 你的主要逻辑
+    skip_lines = (9 + natoms) * (begini - 1);
+    % ... 其他代码
+    
+    % 正常结束时关闭文件
+    fclose(fid_input);
+    fclose(fid_output);
+    fprintf('Process completed successfully.\n');
+    
