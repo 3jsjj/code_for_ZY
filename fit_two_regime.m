@@ -1,4 +1,4 @@
-function [sigma, kappa] = fit_two_regime()
+function [sigma, kappa] = fit_two_regime(output_prefix)
     data = load('alastframe_Ahq2_q.txt');
     q = data(:,1);
     A_hq2 = data(:,2);
