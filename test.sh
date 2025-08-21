@@ -22,8 +22,10 @@ for value in $(seq $start $step $end);do
 	export MATLAB_INPUT_FILE="dump_$value.lammpstrj"
 	matlab -nodesktop -nosplash -batch "run('getaframe.m')"
 	matlab -nodesktop -nosplash -batch "bending_rigidity('a_$value')"
-	matlab -nodesktop -nosplash -batch "fit_two_regime('b_$value')"
-
+	
+	# 捕获MATLAB输出并提取tension值
+	matlab_output=$(matlab -nodesktop -nosplash -batch "fit_two_regime('b_$value')")
+	tension=$(echo "$matlab_output" | grep "TENSION=" | cut -d'=' -f2)
 
 	echo "$value $tension" >> $record_file
 done
