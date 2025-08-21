@@ -56,13 +56,4 @@ fprintf('Process completed successfully.\n');
 end
 
 
-try
-    % 你的主要逻辑
-    skip_lines = (9 + natoms) * (begini - 1);
-    % ... 其他代码
-    
-    % 正常结束时关闭文件
-    fclose(fid_input);
-    fclose(fid_output);
-    fprintf('Process completed successfully.\n');
     

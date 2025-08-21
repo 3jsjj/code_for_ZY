@@ -1,1 +1,23 @@
 1234
+Running with --args 2.0
+The value of d has been replaced in in.flat_membrane with 2.0.
+
+output_file =
+
+    'alastframe.lammpstrj'
+
+Skipping 385800 lines...
+Error using fgets
+Invalid file identifier. Use fopen to generate a valid file identifier.
+
+Error in fgetl (line 32)
+[tline,lt] = fgets(fid);
+
+Error in safe_fgetl (line 3)
+	temp_line = fgetl(fid);
+
+Error in getaframe (line 26)
+        chartemp = safe_fgetl(fid_input);
+
+Error in run (line 91)
+evalin('caller', strcat(script, ';'));
