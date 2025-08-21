@@ -1,4 +1,4 @@
-function getaframe(input_filename)
+function  getaframe(input_filenames)
 %   MATLAB_INPUT_FILE, MATLAB_OUTPUT_FILE, MATLAB_BEGINI, MATLAB_NATOMS
 
 begini = 201;
