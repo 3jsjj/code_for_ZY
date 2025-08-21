@@ -1,9 +1,15 @@
-function [sigma, kappa] = fit_two_regime(output_prefix)
+function [sigma, kappa] = fit_two_regime(prefix)
     data = load('alastframe_Ahq2_q.txt');
     q = data(:,1);
     A_hq2 = data(:,2);
     log_q = log(q);
     log_A = log(A_hq2);
+    
+    if nargin >= 1 && ~isempty(input_filename)
+    output_prefix = prefix;
+else
+    output_prefix = getenv('MATLAB_PARAM');
+end
     
     transition_idx =1;  
     small_q_idx = 1:transition_idx;

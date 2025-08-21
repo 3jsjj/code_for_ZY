@@ -13,7 +13,7 @@ for value in $(seq $start $step $end);do
 	#running python command
 	python3 test.py --args $formatted_value
 	#running LAMMPS command
-	mpirun -np 8 lmp_mpi -in in.flat_membrane
+	#mpirun -np 8 lmp_mpi -in in.flat_membrane
 	dump_file="msd_results_$formatted_value.txt"
 	dump_file_r="boxsize_${formatted_value}.txt"
 	#running python command
@@ -22,8 +22,9 @@ for value in $(seq $start $step $end);do
 	#python3 data.py --file $dump_file
 	export MATLAB_INPUT_FILE="dump_$formatted_value.lammpstrj"
 	matlab -nodesktop -nosplash -batch "getaframe()"
-	matlab -nodesktop -nosplash -batch "bending_rigidity(${formatted_value})"
-	matlab_output=$(matlab -nodesktop -nosplash -batch "fit_two_regime('${formatted_value}')" 2>&1)
+	export MATLAB_PARAM= "a_$formatted_value"
+	matlab -nodesktop -nosplash -batch "bending_rigidity()"
+	matlab_output=$(matlab -nodesktop -nosplash -batch "fit_two_regime()" 2>&1)
 	tension=$(echo "$matlab_output" | grep "TENSION=" | cut -d'=' -f2)
 	bending=$(echo "$matlab_output" | grep "BENDING=" | cut -d'=' -f2)
 

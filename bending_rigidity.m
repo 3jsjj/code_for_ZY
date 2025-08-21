@@ -7,9 +7,16 @@
 
 
 % function bending_rigidity %(flag1,prefix,pb,pe)
-function bending_rigidity(output_prefix)
+function bending_rigidity(prefix)
 flag1 =1;
 pb=1;pe=15;
+
+if nargin >= 1 && ~isempty(input_filename)
+    output_prefix = prefix;
+else
+    output_prefix = getenv('MATLAB_PARAM');
+end
+
 
 set(0, 'DefaultFigureVisible', 'off');
 
@@ -66,13 +73,13 @@ xyz(:,3) = xyz(:,3)*(boxsize(3,2)-boxsize(3,1))+boxsize(3,1);
 fprintf('Starting griddata interpolation...\n');
 tic;
 
-% 尝试不同的插值方法
-try
-    ZI = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'linear');
-catch
-    fprintf('Linear interpolation failed, trying nearest...\n');
+
+%try
+    %ZI = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'v4');
+%catch
+    %fprintf('Linear interpolation failed, trying nearest...\n');
     ZI = griddata(xyz(:,1), xyz(:,2), xyz(:,3), XI, YI, 'nearest');
-end
+%end
 
 interpolation_time = toc;
 fprintf('Griddata completed in %.2f seconds\n', interpolation_time);
@@ -83,7 +90,7 @@ surf(XI,YI,ZI);
 shading interp;
 % pause
 
-surf_filename = sprintf('%s_surface_frame.png', output_prefix);
+surf_filename = sprintf('%d_surface_frame.png', output_prefix);
 print(fig, surf_filename,'-dpng','-r300');
 fprintf('Surface plot saved as :%s\n', surf_filename);
 close(fig);

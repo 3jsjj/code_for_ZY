@@ -1,4 +1,4 @@
-function  getaframe(input_filename)
+function getaframe(input_filename)
 %   MATLAB_INPUT_FILE, MATLAB_OUTPUT_FILE, MATLAB_BEGINI, MATLAB_NATOMS
 
 begini = 201;
@@ -23,14 +23,14 @@ try
     fprintf('Skipping %d lines...\n', skip_lines);
     
     for i = 1:skip_lines
-        chartemp = fgetl(fid_input);
+        chartemp = safe_fgetl(fid_input);
         if ~ischar(chartemp)
             error('End of file reached while skipping lines. Check begini and natoms parameters.');
         end
     end
     line_count = 0;
     while 1
-        chartemp = fgetl(fid_input);   
+        chartemp = safe_fgetl(fid_input);   
         if ~ischar(chartemp)
             break
         end
@@ -39,6 +39,7 @@ try
     end
     
     fprintf('Successfully extracted %d lines to %s\n', line_count, output_file);
+
 catch ME
     % 只有出错时才执行这里
     if fid_input > 0
@@ -49,11 +50,9 @@ catch ME
     end
     rethrow(ME);  % 重新抛出错误
 end
+
 fclose(fid_input);
 fclose(fid_output);
 
 fprintf('Process completed successfully.\n');
 end
-
-
-    
