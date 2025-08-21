@@ -22,8 +22,8 @@ for value in $(seq $start $step $end);do
 	#python3 data.py --file $dump_file
 	export MATLAB_INPUT_FILE="dump_$formatted_value.lammpstrj"
 	matlab -nodesktop -nosplash -batch "getaframe()"
-	matlab -nodesktop -nosplash -batch "bending_rigidity('a_$formatted_value')"
-	matlab_output=$(matlab -nodesktop -nosplash -batch "fit_two_regime('b_$formatted_value')" 2>&1)
+	matlab -nodesktop -nosplash -batch "bending_rigidity(${formatted_value})"
+	matlab_output=$(matlab -nodesktop -nosplash -batch "fit_two_regime('${formatted_value}')" 2>&1)
 	tension=$(echo "$matlab_output" | grep "TENSION=" | cut -d'=' -f2)
 	bending=$(echo "$matlab_output" | grep "BENDING=" | cut -d'=' -f2)
 
