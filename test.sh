@@ -9,12 +9,12 @@ record_file="results.txt"
 
 for value in $(seq $start $step $end);do
 	formatted_value=$(printf "%.1f" $value)
-	param_id=$(echo "$formatted_value" | sed 's/\.//g')
-	echo "Running with --args $param_id"
+	echo "Running with --args $value"
 	#running python command
-	python3 test.py --args $param_id
+	python3 test.py --args $value
 	#running LAMMPS command
-	#mpirun -np 8 lmp_mpi -in in.flat_membrane
+	mpirun -np 8 lmp_mpi -in in.flat_membrane
+	param_id=$(echo "$formatted_value" | sed 's/\.//g')
 	dump_file="msd_results_$param_id.txt"
 	dump_file_r="boxsize_${param_id}.txt"
 	#running python command
