@@ -9,20 +9,21 @@ record_file="results.txt"
 
 for value in $(seq $start $step $end);do
 	formatted_value=$(printf "%.1f" $value)
-	echo "Running with --args $formatted_value"
+	param_id=$(echo "$formatted_value" | sed 's/\.//g')
+	echo "Running with --args $param_id"
 	#running python command
-	python3 test.py --args $formatted_value
+	python3 test.py --args $param_id
 	#running LAMMPS command
 	#mpirun -np 8 lmp_mpi -in in.flat_membrane
-	dump_file="msd_results_$formatted_value.txt"
-	dump_file_r="boxsize_${formatted_value}.txt"
+	dump_file="msd_results_$param_id.txt"
+	dump_file_r="boxsize_${param_id}.txt"
 	#running python command
 	#diffusion=$(python3 calculate_diffusion.py --file $dump_file)
 	#r_0tension=$(python3 2.py --file $dump_file_r)
 	#python3 data.py --file $dump_file
-	export MATLAB_INPUT_FILE="dump_$formatted_value.lammpstrj"
+	export MATLAB_INPUT_FILE="dump_$param_id.lammpstrj"
 	matlab -nodesktop -nosplash -batch "getaframe()"
-	export MATLAB_PARAM= "a_$formatted_value"
+	export MATLAB_PARAM= "a_$param_id"
 	matlab -nodesktop -nosplash -batch "bending_rigidity()"
 	matlab_output=$(matlab -nodesktop -nosplash -batch "fit_two_regime()" 2>&1)
 	tension=$(echo "$matlab_output" | grep "TENSION=" | cut -d'=' -f2)
