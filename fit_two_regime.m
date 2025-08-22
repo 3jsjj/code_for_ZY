@@ -15,7 +15,7 @@ end
     small_q_idx = 1:transition_idx;
     p1 = polyfit(log_q(small_q_idx), log_A(small_q_idx), 1);
 
-    large_q_idx = transition_idx:length(q)-260;
+    large_q_idx = transition_idx:length(q)-1;
     p2 = polyfit(log_q(large_q_idx), log_A(large_q_idx), 1);
     
     kBT_sigma = exp(p1(2));  % kBT/σ

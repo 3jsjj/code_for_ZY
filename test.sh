@@ -23,7 +23,7 @@ for value in $(seq $start $step $end);do
 	#python3 data.py --file $dump_file
 	export MATLAB_INPUT_FILE="dump_$param_id.lammpstrj"
 	matlab -nodesktop -nosplash -batch "getaframe()"
-	export MATLAB_PARAM= "a_$param_id"
+	export MATLAB_PARAM="a_$param_id"
 	matlab -nodesktop -nosplash -batch "bending_rigidity()"
 	matlab_output=$(matlab -nodesktop -nosplash -batch "fit_two_regime()" 2>&1)
 	tension=$(echo "$matlab_output" | grep "TENSION=" | cut -d'=' -f2)

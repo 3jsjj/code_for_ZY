@@ -90,7 +90,7 @@ surf(XI,YI,ZI);
 shading interp;
 % pause
 
-surf_filename = sprintf('%d_surface_frame.png', output_prefix);
+surf_filename = sprintf('%s_surface_frame.png', output_prefix);
 print(fig, surf_filename,'-dpng','-r300');
 fprintf('Surface plot saved as :%s\n', surf_filename);
 close(fig);
