@@ -141,29 +141,3 @@ end, 'Interpreter', 'latex', 'FontSize', 12);
     fprintf('PLOT_SAVED=%s\n', plot_filename);
 end
 
-
-sh test.sh Running with --args 2.0
-The value of d has been replaced in in.flat_membrane with 2.0.
-
-output_file =
-
-    'alastframe.lammpstrj'
-
-Skipping 385800 lines...
-Successfully extracted 1929 lines to alastframe.lammpstrj
-Process completed successfully.
-Starting griddata interpolation...
-Griddata completed in 0.05 seconds
-警告: MATLAB 已通过改用 OpenGL 软件禁用了某些高级的图形渲染功能。欲了解有关详细信息，请点击<a
-href="matlab:opengl('problems')">此处</a>。 
-Surface plot saved as :a_20_surface_frame.png
-错误: 文件:
-/home/zhaoyanhuang/lammp-release/examples/ASPHERE/flat_membrane/remove_rigid-body_t_a_r/new_d/2/job1p8-1p4/d0/try_rcut/new/1.7/try_nu/try_nve/fit_two_regime.m
-行: 96 列: 12
-字符向量未正常终止。
- 
-
-=== 准备分析参数 2.0 的数据 ===
-请为当前数据输入拟合参数：
-请输入 transition_idx (过渡点索引): ^C
-
