@@ -25,9 +25,29 @@ for value in $(seq $start $step $end);do
 	matlab -nodesktop -nosplash -batch "getaframe()"
 	export MATLAB_PARAM="a_$param_id"
 	matlab -nodesktop -nosplash -batch "bending_rigidity()"
+	
+	# 每次运行fit_two_regime前都提示用户输入参数
+	echo ""
+	echo "=== 准备分析参数 $formatted_value 的数据 ==="
+	echo "请为当前数据输入拟合参数："
+	echo -n "请输入 transition_idx (过渡点索引): "
+	read transition_idx
+	echo -n "请输入 end_id (结束点偏移): "
+	read end_id
+	
+	# 导出为环境变量，供MATLAB使用
+	export MATLAB_TRANSITION_IDX=$transition_idx
+	export MATLAB_END_ID=$end_id
+	
+	echo "使用参数: transition_idx=$transition_idx, end_id=$end_id"
+	echo ""
+	
+	# 运行fit_two_regime并获取输出
 	matlab_output=$(matlab -nodesktop -nosplash -batch "fit_two_regime()" 2>&1)
 	tension=$(echo "$matlab_output" | grep "TENSION=" | cut -d'=' -f2)
 	bending=$(echo "$matlab_output" | grep "BENDING=" | cut -d'=' -f2)
 
 	echo "$formatted_value $tension $bending" >> $record_file
+	echo "结果已保存: 参数=$formatted_value, 张力=$tension, 弯曲=$bending"
+	echo ""
 done
