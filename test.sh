@@ -25,6 +25,7 @@ for value in $(seq $start $step $end);do
 	matlab -nodesktop -nosplash -batch "getaframe()"
 	export MATLAB_PARAM="a_$param_id"
 	matlab -nodesktop -nosplash -batch "bending_rigidity()"
+	matlab -nodesktop -nosplash -batch "fit_two_regime()"
 	
 	# 每次运行fit_two_regime前都提示用户输入参数
 	echo ""
