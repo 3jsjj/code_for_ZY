@@ -31,7 +31,7 @@ function [sigma, kappa] = fit_two_regime(prefix)
     
     % 参数验证和调整
     if transition_idx < 1
-        fprintf('警告: transition_idx < 1，调整为 1\n');
+        fprintf('警告: transition_idx < 1,调整为 1\n');
         transition_idx = 1;
     end
     if transition_idx > length(q)
@@ -39,7 +39,7 @@ function [sigma, kappa] = fit_two_regime(prefix)
         transition_idx = length(q);
     end
     if end_id < 0
-        fprintf('警告: end_id < 0，调整为 0\n');
+        fprintf('警告: end_id < 0,调整为 0\n');
         end_id = 0;
     end
     if end_id >= length(q)
@@ -59,7 +59,7 @@ function [sigma, kappa] = fit_two_regime(prefix)
     end
     
     if length(large_q_idx) < 2
-        fprintf('错误: large_q区间点数不足 (需要>=2点，当前%d点)\n', length(large_q_idx));
+        fprintf('错误: large_q区间点数不足 (需要>=2点,当前%d点)\n', length(large_q_idx));
         fprintf('检查参数: transition_idx=%d, end_id=%d, 数据长度=%d\n', transition_idx, end_id, length(q));
         sigma = NaN;
         kappa = NaN;
@@ -110,3 +110,14 @@ function [sigma, kappa] = fit_two_regime(prefix)
     fprintf('BENDING=%.6f\n', kappa);
     fprintf('PLOT_SAVED=%s\n', plot_filename);
 end
+
+
+行: 96 列: 18
+无效表达式。请检查缺失的乘法运算符、缺失或不对称的分隔符或者其他语法错误。要构造矩阵，请使用方括
+号而不是圆括号。
+ 
+
+=== 准备分析参数 2.0 的数据 ===
+请为当前数据输入拟合参数：
+请输入 transition_idx (过渡点索引): ^C
+
