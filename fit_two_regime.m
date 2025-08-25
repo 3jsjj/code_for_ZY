@@ -46,9 +46,6 @@ function [sigma, kappa] = fit_two_regime(prefix)
     loglog(q(small_q_idx), exp(polyval(p1, log_q(small_q_idx))), 'r-', 'LineWidth', 2);
     loglog(q(large_q_idx), exp(polyval(p2, log_q(large_q_idx))), 'g-', 'LineWidth', 2);
     
-    
-    
-    % 保存图片
     plot_filename = [output_prefix '.png'];
     print(fig, plot_filename, '-dpng', '-r300');
     close(fig);
