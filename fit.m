@@ -35,7 +35,7 @@ function [sigma, kappa] = fit_two_regime2(prefix,flag)
     kappa = NaN;
     
     if flag == 1
-        large_q_idx = transition_idx:length(q)-20;
+        large_q_idx = transition_idx:length(q)-end_id;
         
         % 固定斜率拟合: log(A) = log(kBT/κ) - 4*log(q)
         % 重写为: log(A) + 4*log(q) = log(kBT/κ)
@@ -79,7 +79,7 @@ function [sigma, kappa] = fit_two_regime2(prefix,flag)
         intercept1 = mean(log_A(small_q_idx) - fixed_slope1 * log_q(small_q_idx));
         
         % 大q区域：强制斜率为-4 (弯曲刚度主导)
-        large_q_idx = transition_idx:length(q)-28;
+        large_q_idx = transition_idx:length(q)-end_id;
         fixed_slope2 = -4;
         intercept2 = mean(log_A(large_q_idx) - fixed_slope2 * log_q(large_q_idx));
         
@@ -104,9 +104,11 @@ function [sigma, kappa] = fit_two_regime2(prefix,flag)
         fprintf('大q区域实际斜率: %.4f\n', fixed_slope2);
         
         % 绘图
-        figure;
-        loglog(q, A_hq2, 'bo', 'MarkerSize', 6);
+        % 绘图
+        fig = figure('Visible', 'off');
+        loglog(q, A_hq2, 'bo', 'MarkerSize', 4);
         hold on;
+        
         
         % 绘制拟合线
         fitted_A1 = exp(intercept1) .* q(small_q_idx).^fixed_slope1;
@@ -133,16 +135,13 @@ function [sigma, kappa] = fit_two_regime2(prefix,flag)
     % 添加图形美化
     set(gca, 'FontSize', 11);
     box on;
-    
-    % 显示最终结果
-    fprintf('\n=== 拟合结果总结 ===\n');
-    if flag == 1
-        fprintf('模式: 单一机制 (弯曲刚度)\n');
-        fprintf('κ = %.4f kBT\n', kappa);
-    else
-        fprintf('模式: 双机制\n');
-        fprintf('σ = %.4f kBT/nm?\n', sigma);
-        fprintf('κ = %.4f kBT\n', kappa);
-        fprintf('转换点索引: %d (q = %.4f nm^-1)\n', transition_idx, q(transition_idx));
-    end
+    plot_filename = [output_prefix '.png'];
+    print(fig, plot_filename, '-dpng', '-r300');
+    close(fig);
+     
+    % 输出结果（供bash脚本解析）
+    fprintf('TENSION=%.6f\n', sigma);
+    fprintf('BENDING=%.6f\n', kappa);
+    fprintf('PLOT_SAVED=%s\n', plot_filename);
+
 end
