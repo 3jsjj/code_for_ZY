@@ -247,9 +247,9 @@ double ComputePressure::compute_scalar()
     virial_compute(3,3);
     if (keflag)
       scalar = (temperature->dof * boltz * temperature->scalar +
-                virial[0] + virial[1] + virial[2]) / 2.0 * inv_volume * nktv2p;
+                virial[0] + virial[1] + virial[2]) / 3.0 * inv_volume * nktv2p;
     else
-      scalar = (virial[0] + virial[1] + virial[2]) / 2.0 * inv_volume * nktv2p;
+      scalar = (virial[0] + virial[1] + virial[2]) / 3.0 * inv_volume * nktv2p;
   } else {
     inv_volume = 1.0 / (domain->xprd * domain->yprd);
     virial_compute(2,2);
