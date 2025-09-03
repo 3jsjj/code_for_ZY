@@ -12,10 +12,10 @@
 ------------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------
-   Contributing authors: Hongyan Yuan (SUSTech), Zhaoyan Huang(SUSTech)
+   Contributing authors: Hongyan Yuan (SUSTech), Xin Zhang (SUSTech)
 ------------------------------------------------------------------------- */
 
-#include "pair_ylz.h"
+#include "pair_zy.h"
 
 #include "atom.h"
 #include "atom_vec_ellipsoid.h"
@@ -36,6 +36,7 @@ using MathConst::MY_4PI;
 using MathConst::MY_PI2;
 using MathConst::MY_TWOBYSIXTH;
 
+/*
 static const char cite_pair_ylz[] =
     "pair ylz command:\n\n"
     "@Article{Yuan10,\n"
@@ -47,14 +48,15 @@ static const char cite_pair_ylz[] =
     " volume =  82,\n"
     " pages =   {011905}\n"
     "}\n\n";
+    */
 
 /* ---------------------------------------------------------------------- */
 
-PairYLZ::PairYLZ(LAMMPS *lmp) :
+PairZY::PairZY(LAMMPS *lmp) :
     Pair(lmp), epsilon(nullptr), sigma(nullptr), cut(nullptr), eta(nullptr), ddd(nullptr), mu(nullptr),
     beta(nullptr), osmotic_pressure(nullptr), avec(nullptr)
 {
-  if (lmp->citeme) lmp->citeme->add(cite_pair_ylz);
+  if (lmp->citeme) lmp->citeme->add(cite_pair_zy);
 
   single_enable = 0;
   writedata = 1;
@@ -64,7 +66,7 @@ PairYLZ::PairYLZ(LAMMPS *lmp) :
    free all arrays
 ------------------------------------------------------------------------- */
 
-PairYLZ::~PairYLZ()
+PairZY::~PairZY()
 {
   if (allocated) {
     memory->destroy(setflag);
@@ -83,7 +85,7 @@ PairYLZ::~PairYLZ()
 
 /* ---------------------------------------------------------------------- */
 
-void PairYLZ::compute(int eflag, int vflag)
+void PairZY::compute(int eflag, int vflag)
 {
   int i, j, ii, jj, inum, jnum, itype, jtype;
   double evdwl, one_eng, rsq, factor_lj;
@@ -163,7 +165,7 @@ void PairYLZ::compute(int eflag, int vflag)
       
         jquat = bonus[ellipsoid[j]].quat;
         MathExtra::quat_to_mat_trans(jquat, a2);
-        one_eng = ylz_analytic(i, j, a1, a2, r12, rsq, fforce, ttor, rtor);
+        one_eng = zy_analytic(i, j, a1, a2, r12, rsq, fforce, ttor, rtor);
 
         fforce[0] *= factor_lj;
         fforce[1] *= factor_lj;
@@ -207,14 +209,14 @@ void PairYLZ::compute(int eflag, int vflag)
 
   int flag_all;
   MPI_Allreduce(&flag, &flag_all, 1, MPI_INT, MPI_MAX, world);
-  if (flag_all) error->all(FLERR, "All atoms for pair style ylz must be ellipsoids");
+  if (flag_all) error->all(FLERR, "All atoms for pair style zy must be ellipsoids");
 }
 
 /* ----------------------------------------------------------------------
    allocate all arrays
 ------------------------------------------------------------------------- */
 
-void PairYLZ::allocate()
+void PairZY::allocate()
 {
   allocated = 1;
   int np1 = atom->ntypes + 1;
@@ -238,7 +240,7 @@ void PairYLZ::allocate()
    global settings
 ------------------------------------------------------------------------- */
 
-void PairYLZ::settings(int narg, char **arg)
+void PairZY::settings(int narg, char **arg)
 {
   if (narg != 1) error->all(FLERR, "Illegal pair_style command");
 
@@ -249,7 +251,7 @@ void PairYLZ::settings(int narg, char **arg)
    set coeffs for one or more type pairs
 ------------------------------------------------------------------------- */
 
-void PairYLZ::coeff(int narg, char **arg)
+void PairZY::coeff(int narg, char **arg)
 {
   if (narg != 10) error->all(FLERR, "Incorrect args for pair coefficients");
   if (!allocated) allocate();
@@ -304,10 +306,10 @@ std::cout<< "cut:" << cut_one << std::endl;
    init specific to this pair style
 ------------------------------------------------------------------------- */
 
-void PairYLZ::init_style()
+void PairZY::init_style()
 {
   avec = dynamic_cast<AtomVecEllipsoid *>(atom->style_match("ellipsoid"));
-  if (!avec) error->all(FLERR, "Pair style ylz requires atom style ellipsoid");
+  if (!avec) error->all(FLERR, "Pair style zy requires atom style ellipsoid");
 
   neighbor->request(this, instance_me);
 }
@@ -316,7 +318,7 @@ void PairYLZ::init_style()
    init for one type pair i,j and corresponding j,i
 ------------------------------------------------------------------------- */
 
-double PairYLZ::init_one(int i, int j)
+double PairZY::init_one(int i, int j)
 {
   if (setflag[i][j] == 0) {
     epsilon[i][j] = mix_energy(epsilon[i][i], epsilon[j][j], sigma[i][i], sigma[j][j]);
@@ -339,7 +341,7 @@ double PairYLZ::init_one(int i, int j)
    proc 0 writes to restart file
 ------------------------------------------------------------------------- */
 
-void PairYLZ::write_restart(FILE *fp)
+void PairZY::write_restart(FILE *fp)
 {
   write_restart_settings(fp);
 
@@ -364,7 +366,7 @@ void PairYLZ::write_restart(FILE *fp)
    proc 0 reads from restart file, bcasts
 ------------------------------------------------------------------------- */
 
-void PairYLZ::read_restart(FILE *fp)
+void PairZY::read_restart(FILE *fp)
 {
   read_restart_settings(fp);
   allocate();
@@ -402,7 +404,7 @@ void PairYLZ::read_restart(FILE *fp)
    proc 0 writes to restart file
 ------------------------------------------------------------------------- */
 
-void PairYLZ::write_restart_settings(FILE *fp)
+void PairZY::write_restart_settings(FILE *fp)
 {
   fwrite(&cut_global, sizeof(double), 1, fp);
   fwrite(&offset_flag, sizeof(int), 1, fp);
@@ -413,7 +415,7 @@ void PairYLZ::write_restart_settings(FILE *fp)
    proc 0 reads from restart file, bcasts
 ------------------------------------------------------------------------- */
 
-void PairYLZ::read_restart_settings(FILE *fp)
+void PairZY::read_restart_settings(FILE *fp)
 {
   if (comm->me == 0) {
 
@@ -431,7 +433,7 @@ void PairYLZ::read_restart_settings(FILE *fp)
    proc 0 writes to data file
 ------------------------------------------------------------------------- */
 
-void PairYLZ::write_data(FILE *fp)
+void PairZY::write_data(FILE *fp)
 {
   for (int i = 1; i <= atom->ntypes; i++)
     fprintf(fp, "%d %g %g %g %g %g %g %g %g\n", i, epsilon[i][i], sigma[i][i], cut[i][i], eta[i][i], 
@@ -442,7 +444,7 @@ void PairYLZ::write_data(FILE *fp)
    proc 0 writes all pairs to data file
 ------------------------------------------------------------------------- */
 
-void PairYLZ::write_data_all(FILE *fp)
+void PairZY::write_data_all(FILE *fp)
 {
   for (int i = 1; i <= atom->ntypes; i++)
     for (int j = i; j <= atom->ntypes; j++)
@@ -456,7 +458,7 @@ void PairYLZ::write_data_all(FILE *fp)
    if newton is off, rtor is not calculated for ghost atoms
 ------------------------------------------------------------------------- */
 
-double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a2[3][3],
+double PairZY::zy_analytic(const int i, const int j, double a1[3][3], double a2[3][3],
                              double *r12, const double rsq, double *fforce, double *ttor,
                              double *rtor)
 
@@ -516,7 +518,7 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
 
 
   double u_d, uu;
-
+  
 
   if (r < d) {
 
@@ -535,12 +537,12 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
     t_et=1;
     for (int k = 0; k <= et - 1; k++) t_et *= t;    // get t^et
     t_2et= t_et * t_et;    // get t^2et
-    u_d = (t_2et - 2.0 * t_et) * energy_well;
-
-    double temp_var_110 = (u_d + phi) / (rcut - d) ;
-    U = (rcut - r) * temp_var_110;
-    dUdr = - temp_var_110;
-    dUdphi = (rcut - r) / (rcut - d) ;
+    ur_d = (t_2et - 2.0 * t_et) * energy_well;
+    double k = (rcut - d) * (rcut - d);
+    double temp_var_110 = (ur_d + phi) / k ;
+    U = (rcut - r)* (rcut - r) * temp_var_110;
+    dUdr = -2 * (rcut - r) * temp_var_110;
+    dUdphi = (rcut - r) * (rcut - r) / k ;
   }
 
   dUdrhat[0] = dUdphi * dphi_drhat[0];
@@ -571,7 +573,7 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
   }
   return U;
 }
-void *PairYLZ::extract(const char *str, int &dim)
+void *PairZY::extract(const char *str, int &dim)
 {
   dim = 2;
   if (strcmp(str,"osmotic_pressure") == 0) return (void *) osmotic_pressure;

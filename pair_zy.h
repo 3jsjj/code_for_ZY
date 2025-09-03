@@ -13,22 +13,22 @@
 
 #ifdef PAIR_CLASS
 // clang-format off
-PairStyle(ylz,PairYLZ);
+PairStyle(zy,PairZY);
 // clang-format on
 
 #else
 
-#ifndef LMP_PAIR_YLZ_H
-#define LMP_PAIR_YLZ_H
+#ifndef LMP_PAIR_ZY_H
+#define LMP_PAIR_ZY_H
 
 #include "pair.h"
 
 namespace LAMMPS_NS {
 
-class PairYLZ : public Pair {
+class PairZY : public Pair {
  public:
-  PairYLZ(LAMMPS *lmp);
-  ~PairYLZ() override;
+  PairZY(LAMMPS *lmp);
+  ~PairZY() override;
   void compute(int, int) override;
   void settings(int, char **) override;
   void coeff(int, char **) override;
@@ -50,7 +50,7 @@ class PairYLZ : public Pair {
   class AtomVecEllipsoid *avec;
 
   void allocate();
-  double ylz_analytic(const int i, const int j, double a1[3][3], double a2[3][3], double *r12,
+  double zy_analytic(const int i, const int j, double a1[3][3], double a2[3][3], double *r12,
                       const double rsq, double *fforce, double *ttor, double *rtor);
   
 };
