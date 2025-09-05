@@ -1,23 +1,8 @@
-1234
-Running with --args 2.0
-The value of d has been replaced in in.flat_membrane with 2.0.
-
-output_file =
-
-    'alastframe.lammpstrj'
-
-Skipping 385800 lines...
-Error using fgets
-Invalid file identifier. Use fopen to generate a valid file identifier.
-
-Error in fgetl (line 32)
-[tline,lt] = fgets(fid);
-
-Error in safe_fgetl (line 3)
-	temp_line = fgetl(fid);
-
-Error in getaframe (line 26)
-        chartemp = safe_fgetl(fid_input);
-
-Error in run (line 91)
-evalin('caller', strcat(script, ';'));
+mpicxx -g -O3 -std=c++11  -DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64   -DLMP_INTEL -I../../lib/voronoi/includelink  -DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX=1   -I/usr/local/include/voro++  -c ../pair_zy.cpp
+../pair_zy.cpp: In constructor ‘LAMMPS_NS::PairZY::PairZY(LAMMPS_NS::LAMMPS*)’:
+../pair_zy.cpp:59:37: error: ‘cite_pair_zy’ was not declared in this scope
+   59 |   if (lmp->citeme) lmp->citeme->add(cite_pair_zy);
+      |                                     ^~~~~~~~~~~~
+make[1]: *** [Makefile:114：pair_zy.o] 错误 1
+make[1]: 离开目录“/home/zhaoyanhuang/lammp-release/src/Obj_mpi”
+make: *** [Makefile:400：mpi] 错误 2

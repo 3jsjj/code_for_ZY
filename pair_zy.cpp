@@ -517,7 +517,7 @@ double PairZY::zy_analytic(const int i, const int j, double a1[3][3], double a2[
 
 
 
-  double u_d, uu;
+  double ur_d, uu;
   
 
   if (r < d) {
