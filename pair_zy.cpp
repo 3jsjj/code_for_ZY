@@ -36,9 +36,12 @@ using MathConst::MY_4PI;
 using MathConst::MY_PI2;
 using MathConst::MY_TWOBYSIXTH;
 
-/*
-static const char cite_pair_ylz[] =
-    "pair ylz command:\n\n"
+
+static const char cite_pair_zy[] =
+    "pair zy command:\n\n";
+
+    /* -static const char cite_pair_ylz[] =
+    "pair zy command:\n\n"
     "@Article{Yuan10,\n"
     " author =  {H. Yuan, C. Huang, J. Li, G. Lykotrafitis, and S. Zhang},\n"
     " title =   {One-particle-thick, solvent-free, coarse-grained model for biological and "
@@ -47,8 +50,7 @@ static const char cite_pair_ylz[] =
     " year =    2010,\n"
     " volume =  82,\n"
     " pages =   {011905}\n"
-    "}\n\n";
-    */
+    "}\n\n"; */
 
 /* ---------------------------------------------------------------------- */
 
