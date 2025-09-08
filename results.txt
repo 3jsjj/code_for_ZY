@@ -1,51 +1,182 @@
-2.0 0.230000 2.782080
-2.1 0.230000 5.462848
-2.2 0.230000 7.794445
-2.3 0.230000 9.108093
-2.4 0.230000 8.741003
-2.5 0.230000 11.834624
-2.6 0.230000 10.626229
-2.7 0.230000 11.856637
-2.8 0.230000 11.935039
-2.9 0.230000 13.711730
-3.0 0.230000 13.381103
-3.1 0.230000 15.918049
-3.2 0.230000 12.427626
-3.3 0.230000 15.498821
-3.4 0.230000 14.788063
-3.5 0.230000 13.679718
-3.6 0.230000 15.260227
-3.7 0.230000 15.983532
-3.8 0.230000 16.791949
-3.9 0.230000 15.923655
-4.0 0.230000 19.461496
-4.1 0.230000 19.491530
-4.2 0.230000 18.515622
-4.3 0.230000 20.033372
-4.4 0.230000 20.479827
-4.5 0.230000 23.147586
-4.6 0.230000 22.970386
-4.7 0.230000 22.279087
-4.8 0.230000 20.522555
-4.9 0.230000 26.091214
-5.0 0.230000 27.386289
-5.1 0.230000 25.972993
-5.2 0.230000 27.572767
-5.3 0.230000 22.317743
-5.4 0.230000 25.742388
-5.5 0.230000 24.168413
-5.6 0.230000 29.638987
-5.7 0.230000 32.475100
-5.8 0.230000 23.377060
-5.9 0.230000 28.427837
-6.0 0.230000 29.281485
-6.1 0.230000 27.993644
-6.2 0.230000 34.225100
-6.3 0.230000 33.058138
-6.4 0.230000 24.687642
-6.5 0.230000 29.372937
-6.6 0.230000 36.972390
-6.7 0.230000 31.627107
-6.8 0.230000 37.060852
-6.9 0.230000 38.190252
-7.0 0.230000 29.450072
+0.851 diffusion_coefficient: 8.90658
+avg_msd: 3.56263 r = 2.133
+0.861 diffusion_coefficient: 3.72073
+avg_msd: 1.48829 r = 1.846
+0.871 diffusion_coefficient: 0.14953
+avg_msd: 0.05981 r = 1.427
+0.881 diffusion_coefficient: 0.06235
+avg_msd: 0.02494 r = 1.379
+0.891 diffusion_coefficient: 0.02975
+avg_msd: 0.01190 r = 1.363
+0.901 diffusion_coefficient: 0.01828
+avg_msd: 0.00731 r = 1.352
+0.911 diffusion_coefficient: 0.00138
+avg_msd: 0.00055 r = 1.319
+0.921 diffusion_coefficient: 0.00094
+avg_msd: 0.00038 r = 1.318
+0.931 diffusion_coefficient: 0.00063
+avg_msd: 0.00025 r = 1.321
+0.941 diffusion_coefficient: 0.00042
+avg_msd: 0.00017 r = 1.327
+0.951 diffusion_coefficient: 0.00025
+avg_msd: 0.00010 r = 1.333
+0.961 diffusion_coefficient: 0.00014
+avg_msd: 0.00005 r = 1.340
+0.971 diffusion_coefficient: 0.00006
+avg_msd: 0.00002 r = 1.347
+0.981 diffusion_coefficient: 0.00003
+avg_msd: 0.00001 r = 1.354
+0.991 diffusion_coefficient: 0.00008
+avg_msd: 0.00003 r = 1.362
+1.001 diffusion_coefficient: 0.00019
+avg_msd: 0.00008 r = 1.370
+1.011 diffusion_coefficient: 0.00029
+avg_msd: 0.00012 r = 1.378
+1.021 diffusion_coefficient: 0.00056
+avg_msd: 0.00023 r = 1.386
+1.031 diffusion_coefficient: 0.00090
+avg_msd: 0.00036 r = 1.394
+1.041 diffusion_coefficient: 0.00126
+avg_msd: 0.00050 r = 1.401
+1.051 diffusion_coefficient: 0.00164
+avg_msd: 0.00066 r = 1.409
+1.061 diffusion_coefficient: 0.00203
+avg_msd: 0.00081 r = 1.416
+1.071 diffusion_coefficient: 0.00269
+avg_msd: 0.00108 r = 1.423
+1.081 diffusion_coefficient: 0.00323
+avg_msd: 0.00129 r = 1.430
+1.091 diffusion_coefficient: 0.00362
+avg_msd: 0.00145 r = 1.437
+1.101 diffusion_coefficient: 0.00437
+avg_msd: 0.00175 r = 1.444
+1.111 diffusion_coefficient: 0.00496
+avg_msd: 0.00198 r = 1.450
+1.121 diffusion_coefficient: 0.00597
+avg_msd: 0.00239 r = 1.456
+1.131 diffusion_coefficient: 0.00626
+avg_msd: 0.00250 r = 1.462
+1.141 diffusion_coefficient: 0.00733
+avg_msd: 0.00293 r = 1.468
+1.151 diffusion_coefficient: 0.00798
+avg_msd: 0.00319 r = 1.473
+1.161 diffusion_coefficient: 0.00914
+avg_msd: 0.00366 r = 1.477
+1.171 diffusion_coefficient: 0.01094
+avg_msd: 0.00438 r = 1.480
+1.181 diffusion_coefficient: 0.01252
+avg_msd: 0.00501 r = 1.483
+1.191 diffusion_coefficient: 0.01472
+avg_msd: 0.00589 r = 1.484
+1.201 diffusion_coefficient: 0.01648
+avg_msd: 0.00659 r = 1.484
+1.211 diffusion_coefficient: 0.01965
+avg_msd: 0.00786 r = 1.487
+1.221 diffusion_coefficient: 0.02007
+avg_msd: 0.00803 r = 1.484
+1.231 diffusion_coefficient: 0.02401
+avg_msd: 0.00960 r = 1.480
+1.241 diffusion_coefficient: 0.02971
+avg_msd: 0.01189 r = 1.479
+1.251 diffusion_coefficient: 0.03520
+avg_msd: 0.01408 r = 1.476
+1.261 diffusion_coefficient: 0.03210
+avg_msd: 0.01284 r = 1.473
+1.271 diffusion_coefficient: 0.03364
+avg_msd: 0.01346 r = 1.470
+1.281 diffusion_coefficient: 0.03516
+avg_msd: 0.01406 r = 1.466
+1.291 diffusion_coefficient: 0.03042
+avg_msd: 0.01217 r = 1.460
+1.301 diffusion_coefficient: 0.03296
+avg_msd: 0.01318 r = 1.454
+1.311 diffusion_coefficient: 0.02634
+avg_msd: 0.01054 r = 1.447
+1.321 diffusion_coefficient: 0.01333
+avg_msd: 0.00533 r = 1.429
+1.331 diffusion_coefficient: 0.00868
+avg_msd: 0.00347 r = 1.420
+1.341 diffusion_coefficient: 0.00822
+avg_msd: 0.00329 r = 1.418
+1.351 diffusion_coefficient: 0.00787
+avg_msd: 0.00315 r = 1.417
+1.361 diffusion_coefficient: 0.00645
+avg_msd: 0.00258 r = 1.417
+1.371 diffusion_coefficient: 0.00603
+avg_msd: 0.00241 r = 1.417
+1.381 diffusion_coefficient: 0.00917
+avg_msd: 0.00367 r = 1.419
+1.391 diffusion_coefficient: 0.00694
+avg_msd: 0.00277 r = 1.420
+1.401 diffusion_coefficient: 0.00812
+avg_msd: 0.00325 r = 1.421
+1.411 diffusion_coefficient: 0.00762
+avg_msd: 0.00305 r = 1.421
+1.421 diffusion_coefficient: 0.00902
+avg_msd: 0.00361 r = 1.420
+1.431 diffusion_coefficient: 0.01166
+avg_msd: 0.00466 r = 1.414
+1.441 diffusion_coefficient: 0.01318
+avg_msd: 0.00527 r = 1.400
+1.451 diffusion_coefficient: 0.01445
+avg_msd: 0.00578 r = 1.383
+1.461 diffusion_coefficient: 0.01783
+avg_msd: 0.00713 r = 1.365
+1.471 diffusion_coefficient: 0.02547
+avg_msd: 0.01019 r = 1.270
+1.481 diffusion_coefficient: 0.02316
+avg_msd: 0.00926 r = 1.189
+1.491 diffusion_coefficient: 0.02285
+avg_msd: 0.00914 r = 1.178
+1.501 diffusion_coefficient: 0.02321
+avg_msd: 0.00928 r = 1.172
+1.511 diffusion_coefficient: 0.02280
+avg_msd: 0.00912 r = 1.169
+1.521 diffusion_coefficient: 0.02242
+avg_msd: 0.00897 r = 1.167
+1.531 diffusion_coefficient: 0.02441
+avg_msd: 0.00977 r = 1.161
+1.541 diffusion_coefficient: 0.02318
+avg_msd: 0.00927 r = 1.163
+1.551 diffusion_coefficient: 0.02221
+avg_msd: 0.00888 r = 1.165
+1.561 diffusion_coefficient: 0.02122
+avg_msd: 0.00849 r = 1.168
+1.571 diffusion_coefficient: 0.02044
+avg_msd: 0.00818 r = 1.170
+1.581 diffusion_coefficient: 0.01943
+avg_msd: 0.00777 r = 1.175
+1.591 diffusion_coefficient: 0.01858
+avg_msd: 0.00743 r = 1.178
+1.601 diffusion_coefficient: 0.01778
+avg_msd: 0.00711 r = 1.182
+1.611 diffusion_coefficient: 0.01708
+avg_msd: 0.00683 r = 1.185
+1.621 diffusion_coefficient: 0.01596
+avg_msd: 0.00639 r = 1.189
+1.631 diffusion_coefficient: 0.01504
+avg_msd: 0.00601 r = 1.193
+1.641 diffusion_coefficient: 0.01451
+avg_msd: 0.00580 r = 1.196
+1.651 diffusion_coefficient: 0.01413
+avg_msd: 0.00565 r = 1.196
+1.661 diffusion_coefficient: 0.01774
+avg_msd: 0.00710 r = 1.189
+1.671 diffusion_coefficient: 0.02222
+avg_msd: 0.00889 r = 1.166
+1.681 diffusion_coefficient: 0.02278
+avg_msd: 0.00911 r = 1.154
+1.691 diffusion_coefficient: 0.02170
+avg_msd: 0.00868 r = 1.157
+1.701 diffusion_coefficient: 0.02066
+avg_msd: 0.00826 r = 1.162
+1.711 diffusion_coefficient: 0.01964
+avg_msd: 0.00786 r = 1.166
+1.721 diffusion_coefficient: 0.01872
+avg_msd: 0.00749 r = 1.170
+1.731 diffusion_coefficient: 0.01781
+avg_msd: 0.00712 r = 1.175
+1.741 diffusion_coefficient: 0.01689
+avg_msd: 0.00675 r = 1.179
+1.751 diffusion_coefficient: 0.01586
+avg_msd: 0.00634 r = 1.184
