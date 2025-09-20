@@ -6,7 +6,7 @@ function [sigma, kappa] = fit_two_regime2(flag)
         flag =2; % д╛хож╣
     end
     
-    data = load('dump_1.041_0.2_228_onlymembrane_Ahq2_q.txt');
+    data = load('dump_1.021_0.2_228_onlymembrane_Ahq2_q.txt');
     q = data(:,1);
     A_hq2 = data(:,2);
     log_q = log(q);

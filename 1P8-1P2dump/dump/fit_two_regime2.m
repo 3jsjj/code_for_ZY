@@ -3,10 +3,10 @@ function [sigma, kappa] = fit_two_regime2(flag)
     % flag = 2: 拟合斜率-2和-4 (考虑表面张力和弯曲刚度)
     
     if nargin < 1
-        flag =1; % 默认值
+        flag =2; % 默认值
     end
     
-    data = load('dump_1.111_0.2_228_onlymembrane_Ahq2_q.txt');
+    data = load('dump_1.051_0.2_228_onlymembrane_Ahq2_q.txt');
     q = data(:,1);
     A_hq2 = data(:,2);
     log_q = log(q);
