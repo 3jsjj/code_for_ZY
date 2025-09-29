@@ -1,12 +1,12 @@
-function [sigma, kappa] = fit_two_regime2(flag)
+function [sigma, kappa] = fit_two_regime2(value)
     % flag = 1: 仅拟合斜率-4 (只考虑弯曲刚度)
     % flag = 2: 拟合斜率-2和-4 (考虑表面张力和弯曲刚度)
     
-    if nargin < 1
+    if nargin < 2
         flag =2; % 默认值
     end
-    
-    data = load('dump_1.051_0.2_228_onlymembrane_Ahq2_q.txt');
+    prefix = sprintf('dump_%s_0.2_228_onlymembrane', num2str(value));
+    data = load( sprintf('%s_Ahq2_q.txt',prefix));
     q = data(:,1);
     A_hq2 = data(:,2);
     log_q = log(q);

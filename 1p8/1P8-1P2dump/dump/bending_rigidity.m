@@ -10,7 +10,7 @@
 
 flag1 =1;
 pb=1;pe=15;
-value = 1.021;
+value = 0.921;
 Lx = 70 * value;
 Ly = 40 * value *1.73 ;
 n = round(Lx)* 2;
@@ -133,5 +133,5 @@ plot(data(pb:pe,1),f2,'r')
 end
 
 end
-
+[sigma, kappa]=fit_two_regime2(value);
 
