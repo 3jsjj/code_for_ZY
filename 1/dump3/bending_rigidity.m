@@ -10,11 +10,11 @@
 
 flag1 =1;
 pb=1;pe=15;
-value = 2.51;
+value = 3.01;
 value1 = 0.95;
 Lx = 70 * value1;
 Ly = 40 * value1 *1.73 ;
-n =70;
+n =round(Lx)*5;
 begini = 1;
 endi = 1;
 

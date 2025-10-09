@@ -14,7 +14,7 @@ value =2.51;
 value1 = 0.98;
 Lx = 70 * value1;
 Ly = 40 * value1 *1.73 ;
-n = round(Lx)* 2;
+n = round(Lx)* 5;
 begini = 1;
 endi = 1;
 

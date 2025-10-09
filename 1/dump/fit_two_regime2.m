@@ -12,7 +12,7 @@ function [sigma, kappa] = fit_two_regime2(value)
     log_q = log(q);
     log_A = log(A_hq2);
     %≥ı º…Ë∂®
-    transition_idx = 3;
+    transition_idx = 30;
     sigma = NaN;
     kappa = NaN;
     
