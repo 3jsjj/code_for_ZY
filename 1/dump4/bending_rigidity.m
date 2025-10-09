@@ -10,7 +10,7 @@
 
 flag1 =1;
 pb=1;pe=15;
-value = 2.51;
+value =2.51;
 value1 = 0.98;
 Lx = 70 * value1;
 Ly = 40 * value1 *1.73 ;

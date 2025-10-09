@@ -10,8 +10,8 @@
 
 flag1 =1;
 pb=1;pe=15;
-value = 2.01;
-value1 = 0.95;
+value =3.01;
+value1 = 0.92;
 Lx = 70 * value1;
 Ly = 40 * value1 *1.73 ;
 n = round(Lx)* 2;
@@ -22,7 +22,7 @@ natoms=5609;
 
 for i=2:2
 
-prefix = sprintf('dump_0.95_%s_228_onlymembrane', num2str(value));
+prefix = sprintf('dump_0.92_%s_228_onlymembrane', num2str(value));
 filename = [prefix '.lammpstrj'];
 
 

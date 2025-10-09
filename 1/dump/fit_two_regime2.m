@@ -5,7 +5,7 @@ function [sigma, kappa] = fit_two_regime2(value)
     if nargin < 2
         flag =2; % Ä¬ÈÏÖµ
     end
-    prefix = sprintf('dump_0.95_%s_228_onlymembrane', num2str(value));
+    prefix = sprintf('dump_0.92_%s_228_onlymembrane', num2str(value));
     data = load( sprintf('%s_Ahq2_q.txt',prefix));
     q = data(:,1);
     A_hq2 = data(:,2);
