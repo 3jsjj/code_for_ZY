@@ -13,7 +13,7 @@ pb=1;pe=15;
 value = 0.941;
 Lx = 70 * value;
 Ly = 40 * value *1.73 ;
-n = round(Lx)* 5;
+n = round(Lx)* 50;
 begini = 1;
 endi = 1;
 
