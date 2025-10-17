@@ -10,7 +10,7 @@
 
 flag1 =1;
 pb=1;pe=15;
-value = 0.911;
+value = 0.961;
 Lx = 280 * value;
 Ly = 160 * value *1.73 ;
 n = round(Lx)* 1;
