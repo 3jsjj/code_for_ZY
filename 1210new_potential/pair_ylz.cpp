@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   LAMMPS development team: developers@lammps.org
+   LAMMPS Development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -12,7 +12,7 @@
 ------------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------
-   Contributing authors: Hongyan Yuan (SUSTech), Zhaoyan Huang(SUSTech)
+   Contributing author: Hongyan Yuan (SUSTech)
 ------------------------------------------------------------------------- */
 
 #include "pair_ylz.h"
@@ -28,11 +28,11 @@
 #include "memory.h"
 #include "neigh_list.h"
 #include "neighbor.h"
-#include <iostream>
+
 #include <cmath>
 
 using namespace LAMMPS_NS;
-using MathConst::MY_4PI;
+using MathConst::MY_PI;
 using MathConst::MY_PI2;
 using MathConst::MY_TWOBYSIXTH;
 
@@ -51,8 +51,8 @@ static const char cite_pair_ylz[] =
 /* ---------------------------------------------------------------------- */
 
 PairYLZ::PairYLZ(LAMMPS *lmp) :
-    Pair(lmp), epsilon(nullptr), sigma(nullptr), cut(nullptr), eta(nullptr), ddd(nullptr), mu(nullptr),
-    beta(nullptr), osmotic_pressure(nullptr), avec(nullptr)
+    Pair(lmp), epsilon(nullptr), sigma(nullptr), cut(nullptr), zeta(nullptr), mu(nullptr),
+    beta(nullptr), lambda(nullptr), avec(nullptr)
 {
   if (lmp->citeme) lmp->citeme->add(cite_pair_ylz);
 
@@ -73,11 +73,10 @@ PairYLZ::~PairYLZ()
     memory->destroy(epsilon);
     memory->destroy(sigma);
     memory->destroy(cut);
-    memory->destroy(eta);
-    memory->destroy(ddd);
+    memory->destroy(zeta);
     memory->destroy(mu);
     memory->destroy(beta);
-    memory->destroy(osmotic_pressure);
+    memory->destroy(lambda);
   }
 }
 
@@ -111,7 +110,6 @@ void PairYLZ::compute(int eflag, int vflag)
   firstneigh = list->firstneigh;
 
   // loop over neighbors of my atoms  
-
   int flag = 0;
   for (ii = 0; ii < inum; ii++) {
     i = ilist[ii];
@@ -127,16 +125,9 @@ void PairYLZ::compute(int eflag, int vflag)
     iquat = bonus[ellipsoid[i]].quat;
     MathExtra::quat_to_mat_trans(iquat, a1);
 
-//add osmotic_pressure 
-
-    f[i][0] -= osmotic_pressure[1][1] * a1[0][0];
-    f[i][1] -= osmotic_pressure[1][1] * a1[0][1];
-    f[i][2] -= osmotic_pressure[1][1] * a1[0][2];
-
     jlist = firstneigh[i];
     jnum = numneigh[i];
-    
-    
+
     for (jj = 0; jj < jnum; jj++) {
       j = jlist[jj];
       factor_lj = special_lj[sbmask(j)];
@@ -160,7 +151,7 @@ void PairYLZ::compute(int eflag, int vflag)
       // compute if less than cutoff
 
       if (rsq < cutsq[itype][jtype]) {
-      
+
         jquat = bonus[ellipsoid[j]].quat;
         MathExtra::quat_to_mat_trans(jquat, a2);
         one_eng = ylz_analytic(i, j, a1, a2, r12, rsq, fforce, ttor, rtor);
@@ -198,8 +189,16 @@ void PairYLZ::compute(int eflag, int vflag)
                        -r12[0], -r12[1], -r12[2]);
       }
     }
+
+//add pressure, we will check double counting latter
+
+    f[i][0] -= lambda[1][1] * a1[0][0];
+    f[i][1] -= lambda[1][1] * a1[0][1];
+    f[i][2] -= lambda[1][1] * a1[0][2];
+    //printf("%d\n",jj);
+    //std:ofstream logfile("log1.txt");
+//it is bot printf f ,it is particle ID should be printf
   }
-  
 
   if (vflag_fdotr) virial_fdotr_compute();
 
@@ -227,11 +226,10 @@ void PairYLZ::allocate()
   memory->create(epsilon, np1, np1, "pair:epsilon");
   memory->create(sigma, np1, np1, "pair:sigma");
   memory->create(cut, np1, np1, "pair:cut");
-  memory->create(eta, np1, np1, "pair:eta");
-  memory->create(ddd, np1, np1, "pair:ddd");
+  memory->create(zeta, np1, np1, "pair:zeta");
   memory->create(mu, np1, np1, "pair:mu");
   memory->create(beta, np1, np1, "pair:beta");
-  memory->create(osmotic_pressure, np1, np1, "pair:osmotic_pressure");
+  memory->create(lambda, np1, np1, "pair:lambda");
 }
 
 /* ----------------------------------------------------------------------
@@ -251,7 +249,7 @@ void PairYLZ::settings(int narg, char **arg)
 
 void PairYLZ::coeff(int narg, char **arg)
 {
-  if (narg != 10) error->all(FLERR, "Incorrect args for pair coefficients");
+  if (narg != 9) error->all(FLERR, "Incorrect args for pair coefficients");
   if (!allocated) allocate();
 
   int ilo, ihi, jlo, jhi;
@@ -260,25 +258,11 @@ void PairYLZ::coeff(int narg, char **arg)
 
   double epsilon_one = utils::numeric(FLERR, arg[2], false, lmp);
   double sigma_one = utils::numeric(FLERR, arg[3], false, lmp);
-  double eta_one = utils::numeric(FLERR, arg[4], false, lmp);
-  double ddd_one = utils::numeric(FLERR, arg[5], false, lmp);
-  double mu_one = utils::numeric(FLERR, arg[6], false, lmp);
-  double beta_one = utils::numeric(FLERR, arg[7], false, lmp);
-  double osmotic_pressure_one = utils::numeric(FLERR, arg[8], false, lmp);
-  double cut_one = utils::numeric(FLERR, arg[9], false, lmp);
-  
-//output parameters for inspection
-
-std::cout<< "pair coefficient:" << std::endl;
-std::cout<< "ilo:"<< ilo << ", ihl"<< ihi <<",jlo:"<< jlo <<",jhi:"<<jhi<< std::endl;
-std::cout<< "epsilon:" << epsilon_one << std::endl;
-std::cout<< "sigma:" << sigma_one << std::endl;
-std::cout<< "eta:" << eta_one << std::endl;
-std::cout<< "ddd:" << ddd_one << std::endl;
-std::cout<< "mu:" << mu_one << std::endl;
-std::cout<< "beta:" << beta_one << std::endl;
-std::cout<< "osmotic_pressure:" << osmotic_pressure_one << std::endl;
-std::cout<< "cut:" << cut_one << std::endl;
+  double zeta_one = utils::numeric(FLERR, arg[4], false, lmp);
+  double mu_one = utils::numeric(FLERR, arg[5], false, lmp);
+  double beta_one = utils::numeric(FLERR, arg[6], false, lmp);
+  double cut_one = utils::numeric(FLERR, arg[7], false, lmp);
+  double lambda_one = utils::numeric(FLERR, arg[8], false, lmp);
 
   int count = 0;
   for (int i = ilo; i <= ihi; i++) {
@@ -286,11 +270,10 @@ std::cout<< "cut:" << cut_one << std::endl;
       epsilon[i][j] = epsilon_one;
       sigma[i][j] = sigma_one;
       cut[i][j] = cut_one;
-      eta[i][j] = eta_one;
-      ddd[i][j] = ddd_one;
+      zeta[i][j] = zeta_one;
       mu[i][j] = mu_one;
       beta[i][j] = beta_one;
-      osmotic_pressure[i][j] = osmotic_pressure_one;
+      lambda[i][j] = lambda_one;
 
       setflag[i][j] = 1;
       count++;
@@ -326,11 +309,10 @@ double PairYLZ::init_one(int i, int j)
 
   epsilon[j][i] = epsilon[i][j];
   sigma[j][i] = sigma[i][j];
-  eta[j][i] = eta[i][j];
-  ddd[j][i] = ddd[i][j];
+  zeta[j][i] = zeta[i][j];
   mu[j][i] = mu[i][j];
   beta[j][i] = beta[i][j];
-  osmotic_pressure[j][i] = osmotic_pressure[i][j];
+  lambda[j][i] = lambda[i][j];
 
   return cut[i][j];
 }
@@ -350,11 +332,10 @@ void PairYLZ::write_restart(FILE *fp)
         fwrite(&epsilon[i][j], sizeof(double), 1, fp);
         fwrite(&sigma[i][j], sizeof(double), 1, fp);
         fwrite(&cut[i][j], sizeof(double), 1, fp);
-        fwrite(&eta[i][j], sizeof(int), 1, fp);
-        fwrite(&ddd[i][j], sizeof(double), 1, fp);
+        fwrite(&zeta[i][j], sizeof(double), 1, fp);
         fwrite(&mu[i][j], sizeof(double), 1, fp);
         fwrite(&beta[i][j], sizeof(double), 1, fp);
-        fwrite(&osmotic_pressure[i][j], sizeof(double), 1, fp);
+        fwrite(&lambda[i][j], sizeof(double), 1, fp);
       }
     }
   }
@@ -378,21 +359,19 @@ void PairYLZ::read_restart(FILE *fp)
           utils::sfread(FLERR, &epsilon[i][j], sizeof(double), 1, fp, nullptr, error);
           utils::sfread(FLERR, &sigma[i][j], sizeof(double), 1, fp, nullptr, error);
           utils::sfread(FLERR, &cut[i][j], sizeof(double), 1, fp, nullptr, error);
-          utils::sfread(FLERR, &eta[i][j], sizeof(int), 1, fp, nullptr, error);
-          utils::sfread(FLERR, &ddd[i][j], sizeof(double), 1, fp, nullptr, error);  
+          utils::sfread(FLERR, &zeta[i][j], sizeof(double), 1, fp, nullptr, error);
           utils::sfread(FLERR, &mu[i][j], sizeof(double), 1, fp, nullptr, error);
           utils::sfread(FLERR, &beta[i][j], sizeof(double), 1, fp, nullptr, error);
-          utils::sfread(FLERR, &osmotic_pressure[i][j], sizeof(double), 1, fp, nullptr, error);
+          utils::sfread(FLERR, &lambda[i][j], sizeof(double), 1, fp, nullptr, error);
         }
 
         MPI_Bcast(&epsilon[i][j], 1, MPI_DOUBLE, 0, world);
         MPI_Bcast(&sigma[i][j], 1, MPI_DOUBLE, 0, world);
         MPI_Bcast(&cut[i][j], 1, MPI_DOUBLE, 0, world);
-        MPI_Bcast(&eta[i][j], 1, MPI_INT, 0, world);
-        MPI_Bcast(&eta[i][j], 1, MPI_DOUBLE, 0, world);
+        MPI_Bcast(&zeta[i][j], 1, MPI_DOUBLE, 0, world);
         MPI_Bcast(&mu[i][j], 1, MPI_DOUBLE, 0, world);
         MPI_Bcast(&beta[i][j], 1, MPI_DOUBLE, 0, world);
-        MPI_Bcast(&osmotic_pressure[i][j], 1, MPI_DOUBLE, 0, world);
+        MPI_Bcast(&lambda[i][j], 1, MPI_DOUBLE, 0, world);
       }
     }
   }
@@ -434,8 +413,8 @@ void PairYLZ::read_restart_settings(FILE *fp)
 void PairYLZ::write_data(FILE *fp)
 {
   for (int i = 1; i <= atom->ntypes; i++)
-    fprintf(fp, "%d %g %g %g %g %g %g %g %g\n", i, epsilon[i][i], sigma[i][i], cut[i][i], eta[i][i], 
-            ddd[i][i], mu[i][i], beta[i][i], osmotic_pressure[i][i]);
+    fprintf(fp, "%d %g %g %g %g %g %g %g\n", i, epsilon[i][i], sigma[i][i], cut[i][i], zeta[i][i],
+            mu[i][i], beta[i][i], lambda[i][i]);
 }
 
 /* ----------------------------------------------------------------------
@@ -446,8 +425,8 @@ void PairYLZ::write_data_all(FILE *fp)
 {
   for (int i = 1; i <= atom->ntypes; i++)
     for (int j = i; j <= atom->ntypes; j++)
-      fprintf(fp, "%d %d %g %g %g %g %g %g %g %g\n", i, j, epsilon[i][j], sigma[i][j], cut[i][j],
-              eta[i][j], ddd[i][j], mu[i][j], beta[i][j], osmotic_pressure[i][j]);
+      fprintf(fp, "%d %d %g %g %g %g %g %g %g\n", i, j, epsilon[i][i], sigma[i][i], cut[i][j],
+              zeta[i][j], mu[i][j], beta[i][j], lambda[i][j]);
 }
 
 /* ----------------------------------------------------------------------
@@ -471,15 +450,13 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
 
   double ni1[3], nj1[3], dphi_drhat[3], dUdrhat[3], dUdni1[3], dUdnj1[3];
   double dphi_dni1[3], dphi_dnj1[3];
-  double t,t_et,t_2et, cos_t, U, uR, uA, dUdr, dUdphi;
+  double t, t1, t2, t4, cos_t, U, uR, uA, dUdr, dUdphi;
   const double energy_well = epsilon[type[i]][type[j]];
   const double rmin = MY_TWOBYSIXTH * sigma[type[i]][type[j]];
   const double rcut = cut[type[i]][type[j]];
-  const int et = eta[type[i]][type[j]];
-  const double d = ddd[type[i]][type[j]];
+  const double zt = zeta[type[i]][type[j]];
   const double muu = mu[type[i]][type[j]];
   const double sint = beta[type[i]][type[j]];
-
 
   ni1[0] = a1[0][0];
   ni1[1] = a1[0][1];
@@ -493,54 +470,40 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
   const double ni1rhat = MathExtra::dot3(ni1, r12hat);
   const double nj1rhat = MathExtra::dot3(nj1, r12hat);
 
-  const double sint_minus_ni1rhat = sint - ni1rhat;
-  const double sint_plus_nj1rhat = sint + nj1rhat;
+  const double a = ninj + (sint - ni1rhat) * (sint + nj1rhat) - 2.0 * sint * sint;
+  const double phi = 1.0 + (a - 1.0) * muu;
 
-  const double a = ninj + sint_minus_ni1rhat * sint_plus_nj1rhat - 2.0 * sint * sint;
-  const double ne_epsi_mu = - energy_well* muu;
+  dphi_drhat[0] = muu * ((sint - ni1rhat) * nj1[0] - ni1[0] * (sint + nj1rhat));
+  dphi_drhat[1] = muu * ((sint - ni1rhat) * nj1[1] - ni1[1] * (sint + nj1rhat));
+  dphi_drhat[2] = muu * ((sint - ni1rhat) * nj1[2] - ni1[2] * (sint + nj1rhat));
 
-  double phi = ne_epsi_mu* (a - 1.0) ;
+  dphi_dni1[0] = muu * (nj1[0] - r12hat[0] * (sint + nj1rhat));
+  dphi_dni1[1] = muu * (nj1[1] - r12hat[1] * (sint + nj1rhat));
+  dphi_dni1[2] = muu * (nj1[2] - r12hat[2] * (sint + nj1rhat));
 
-  dphi_drhat[0] = ne_epsi_mu * (sint_minus_ni1rhat * nj1[0] - ni1[0] * sint_plus_nj1rhat);
-  dphi_drhat[1] = ne_epsi_mu * (sint_minus_ni1rhat * nj1[1] - ni1[1] * sint_plus_nj1rhat);
-  dphi_drhat[2] = ne_epsi_mu * (sint_minus_ni1rhat * nj1[2] - ni1[2] * sint_plus_nj1rhat);
+  dphi_dnj1[0] = muu * (ni1[0] + r12hat[0] * (sint - ni1rhat));
+  dphi_dnj1[1] = muu * (ni1[1] + r12hat[1] * (sint - ni1rhat));
+  dphi_dnj1[2] = muu * (ni1[2] + r12hat[2] * (sint - ni1rhat));
 
-  dphi_dni1[0] = ne_epsi_mu * (nj1[0] - r12hat[0] * sint_plus_nj1rhat);
-  dphi_dni1[1] = ne_epsi_mu * (nj1[1] - r12hat[1] * sint_plus_nj1rhat);
-  dphi_dni1[2] = ne_epsi_mu * (nj1[2] - r12hat[2] * sint_plus_nj1rhat);
-
-  dphi_dnj1[0] = ne_epsi_mu * (ni1[0] + r12hat[0] * sint_minus_ni1rhat);
-  dphi_dnj1[1] = ne_epsi_mu * (ni1[1] + r12hat[1] * sint_minus_ni1rhat);
-  dphi_dnj1[2] = ne_epsi_mu * (ni1[2] + r12hat[2] * sint_minus_ni1rhat);
-
-
-
-  double u_d, uu;
-
-
-  if (r < d) {
-
+  if (r < rmin) {
     t = rmin / r;
-    t_et=1;
-    for (int k = 0; k <= et - 1; k++) t_et *= t;    // get t^et
-    t_2et= t_et * t_et;    // get t^2et
-    uu = (t_2et - 2.0 * t_et) * energy_well;
-    U = uu + phi;
-    dUdr = 2.0* et * (t_et - t_2et) / r * energy_well;
-    dUdphi = 1.0; } 
-  else {
+    t2 = t * t;
+    t4 = t2 * t2;
+    uR = (t4 - 2.0 * t2) * energy_well;
+    U = uR + (1.0 - phi) * energy_well;
+    dUdr = 4.0 * (t2 - t4) / r * energy_well;
+    dUdphi = -energy_well;
+  } else {
+    t = MY_PI2 * (r - rmin) / (rcut - rmin);
+    cos_t = cos(t);
+    t1 = cos_t;
 
-    // computing u(d), which is a constant
-    t = rmin / d;
-    t_et=1;
-    for (int k = 0; k <= et - 1; k++) t_et *= t;    // get t^et
-    t_2et= t_et * t_et;    // get t^2et
-    u_d = (t_2et - 2.0 * t_et) * energy_well;
+    for (int k = 1; k <= 2 * zt - 2; k++) t1 *= cos_t;    // get cos()^(2zt-1)
 
-    double temp_var_110 = (u_d + phi) / (rcut - d) ;
-    U = (rcut - r) * temp_var_110;
-    dUdr = - temp_var_110;
-    dUdphi = (rcut - r) / (rcut - d) ;
+    uA = -energy_well * t1 * cos_t;
+    U = uA * phi;
+    dUdr = MY_PI * zt / (rcut - rmin) * (t1)  *sin(t) * phi * energy_well;
+    dUdphi = uA;
   }
 
   dUdrhat[0] = dUdphi * dphi_drhat[0];
@@ -552,7 +515,7 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
   fforce[0] = dUdr * r12hat[0] + (dUdrhat[0] - dUdrhatrhat * r12hat[0]) / r;
   fforce[1] = dUdr * r12hat[1] + (dUdrhat[1] - dUdrhatrhat * r12hat[1]) / r;
   fforce[2] = dUdr * r12hat[2] + (dUdrhat[2] - dUdrhatrhat * r12hat[2]) / r;
-  
+
   // torque i
 
   dUdni1[0] = dUdphi * dphi_dni1[0];
@@ -574,6 +537,6 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
 void *PairYLZ::extract(const char *str, int &dim)
 {
   dim = 2;
-  if (strcmp(str,"osmotic_pressure") == 0) return (void *) osmotic_pressure;
+  if (strcmp(str,"lambda") == 0) return (void *) lambda;
   return nullptr;
 }
