@@ -36,7 +36,7 @@ using MathConst::MY_PI;
 using MathConst::MY_PI2;
 using MathConst::MY_TWOBYSIXTH;
 
-static const char cite_pair_ylz[] =
+static const char cite_pair_ylz_new[] =
     "pair ylz command:\n\n"
     "@Article{Yuan10,\n"
     " author =  {H. Yuan, C. Huang, J. Li, G. Lykotrafitis, and S. Zhang},\n"
@@ -50,11 +50,11 @@ static const char cite_pair_ylz[] =
 
 /* ---------------------------------------------------------------------- */
 
-PairYLZ::PairYLZ(LAMMPS *lmp) :
+PairYLZ_new::PairYLZ_new(LAMMPS *lmp) :
     Pair(lmp), epsilon(nullptr), sigma(nullptr), cut(nullptr), zeta(nullptr), mu(nullptr),
     beta(nullptr), lambda(nullptr), avec(nullptr)
 {
-  if (lmp->citeme) lmp->citeme->add(cite_pair_ylz);
+  if (lmp->citeme) lmp->citeme->add(cite_pair_ylz_new);
 
   single_enable = 0;
   writedata = 1;
@@ -64,7 +64,7 @@ PairYLZ::PairYLZ(LAMMPS *lmp) :
    free all arrays
 ------------------------------------------------------------------------- */
 
-PairYLZ::~PairYLZ()
+PairYLZ_new::~PairYLZ_new()
 {
   if (allocated) {
     memory->destroy(setflag);
@@ -82,7 +82,7 @@ PairYLZ::~PairYLZ()
 
 /* ---------------------------------------------------------------------- */
 
-void PairYLZ::compute(int eflag, int vflag)
+void PairYLZ_new::compute(int eflag, int vflag)
 {
   int i, j, ii, jj, inum, jnum, itype, jtype;
   double evdwl, one_eng, rsq, factor_lj;
@@ -154,7 +154,7 @@ void PairYLZ::compute(int eflag, int vflag)
 
         jquat = bonus[ellipsoid[j]].quat;
         MathExtra::quat_to_mat_trans(jquat, a2);
-        one_eng = ylz_analytic(i, j, a1, a2, r12, rsq, fforce, ttor, rtor);
+        one_eng = ylz_new_analytic(i, j, a1, a2, r12, rsq, fforce, ttor, rtor);
 
         fforce[0] *= factor_lj;
         fforce[1] *= factor_lj;
@@ -206,14 +206,14 @@ void PairYLZ::compute(int eflag, int vflag)
 
   int flag_all;
   MPI_Allreduce(&flag, &flag_all, 1, MPI_INT, MPI_MAX, world);
-  if (flag_all) error->all(FLERR, "All atoms for pair style ylz must be ellipsoids");
+  if (flag_all) error->all(FLERR, "All atoms for pair style ylz_new must be ellipsoids");
 }
 
 /* ----------------------------------------------------------------------
    allocate all arrays
 ------------------------------------------------------------------------- */
 
-void PairYLZ::allocate()
+void PairYLZ_new::allocate()
 {
   allocated = 1;
   int np1 = atom->ntypes + 1;
@@ -236,7 +236,7 @@ void PairYLZ::allocate()
    global settings
 ------------------------------------------------------------------------- */
 
-void PairYLZ::settings(int narg, char **arg)
+void PairYLZ_new::settings(int narg, char **arg)
 {
   if (narg != 1) error->all(FLERR, "Illegal pair_style command");
 
@@ -247,7 +247,7 @@ void PairYLZ::settings(int narg, char **arg)
    set coeffs for one or more type pairs
 ------------------------------------------------------------------------- */
 
-void PairYLZ::coeff(int narg, char **arg)
+void PairYLZ_new::coeff(int narg, char **arg)
 {
   if (narg != 9) error->all(FLERR, "Incorrect args for pair coefficients");
   if (!allocated) allocate();
@@ -287,10 +287,10 @@ void PairYLZ::coeff(int narg, char **arg)
    init specific to this pair style
 ------------------------------------------------------------------------- */
 
-void PairYLZ::init_style()
+void PairYLZ_new::init_style()
 {
   avec = dynamic_cast<AtomVecEllipsoid *>(atom->style_match("ellipsoid"));
-  if (!avec) error->all(FLERR, "Pair style ylz requires atom style ellipsoid");
+  if (!avec) error->all(FLERR, "Pair style ylz_new requires atom style ellipsoid");
 
   neighbor->request(this, instance_me);
 }
@@ -299,7 +299,7 @@ void PairYLZ::init_style()
    init for one type pair i,j and corresponding j,i
 ------------------------------------------------------------------------- */
 
-double PairYLZ::init_one(int i, int j)
+double PairYLZ_new::init_one(int i, int j)
 {
   if (setflag[i][j] == 0) {
     epsilon[i][j] = mix_energy(epsilon[i][i], epsilon[j][j], sigma[i][i], sigma[j][j]);
@@ -321,7 +321,7 @@ double PairYLZ::init_one(int i, int j)
    proc 0 writes to restart file
 ------------------------------------------------------------------------- */
 
-void PairYLZ::write_restart(FILE *fp)
+void PairYLZ_new::write_restart(FILE *fp)
 {
   write_restart_settings(fp);
 
@@ -345,7 +345,7 @@ void PairYLZ::write_restart(FILE *fp)
    proc 0 reads from restart file, bcasts
 ------------------------------------------------------------------------- */
 
-void PairYLZ::read_restart(FILE *fp)
+void PairYLZ_new::read_restart(FILE *fp)
 {
   read_restart_settings(fp);
   allocate();
@@ -381,7 +381,7 @@ void PairYLZ::read_restart(FILE *fp)
    proc 0 writes to restart file
 ------------------------------------------------------------------------- */
 
-void PairYLZ::write_restart_settings(FILE *fp)
+void PairYLZ_new::write_restart_settings(FILE *fp)
 {
   fwrite(&cut_global, sizeof(double), 1, fp);
   fwrite(&offset_flag, sizeof(int), 1, fp);
@@ -392,7 +392,7 @@ void PairYLZ::write_restart_settings(FILE *fp)
    proc 0 reads from restart file, bcasts
 ------------------------------------------------------------------------- */
 
-void PairYLZ::read_restart_settings(FILE *fp)
+void PairYLZ_new::read_restart_settings(FILE *fp)
 {
   if (comm->me == 0) {
 
@@ -410,7 +410,7 @@ void PairYLZ::read_restart_settings(FILE *fp)
    proc 0 writes to data file
 ------------------------------------------------------------------------- */
 
-void PairYLZ::write_data(FILE *fp)
+void PairYLZ_new::write_data(FILE *fp)
 {
   for (int i = 1; i <= atom->ntypes; i++)
     fprintf(fp, "%d %g %g %g %g %g %g %g\n", i, epsilon[i][i], sigma[i][i], cut[i][i], zeta[i][i],
@@ -421,7 +421,7 @@ void PairYLZ::write_data(FILE *fp)
    proc 0 writes all pairs to data file
 ------------------------------------------------------------------------- */
 
-void PairYLZ::write_data_all(FILE *fp)
+void PairYLZ_new::write_data_all(FILE *fp)
 {
   for (int i = 1; i <= atom->ntypes; i++)
     for (int j = i; j <= atom->ntypes; j++)
@@ -435,7 +435,7 @@ void PairYLZ::write_data_all(FILE *fp)
    if newton is off, rtor is not calculated for ghost atoms
 ------------------------------------------------------------------------- */
 
-double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a2[3][3],
+double PairYLZ_new::ylz_new_analytic(const int i, const int j, double a1[3][3], double a2[3][3],
                              double *r12, const double rsq, double *fforce, double *ttor,
                              double *rtor)
 
@@ -450,7 +450,7 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
 
   double ni1[3], nj1[3], dphi_drhat[3], dUdrhat[3], dUdni1[3], dUdnj1[3];
   double dphi_dni1[3], dphi_dnj1[3];
-  double t, t1, t2, t4, f_t, U, uR, uA, dUdr, dfdr, dUdphi;
+  double t, t1, t2, t4, f_t, L, l, U, uR, uA, dUdr, dfdr, dUdphi;
   const double energy_well = epsilon[type[i]][type[j]];
   const double rmin = MY_TWOBYSIXTH * sigma[type[i]][type[j]];
   const double rcut = cut[type[i]][type[j]];
@@ -537,7 +537,7 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
   }
   return U;
 }
-void *PairYLZ::extract(const char *str, int &dim)
+void *PairYLZ_new::extract(const char *str, int &dim)
 {
   dim = 2;
   if (strcmp(str,"lambda") == 0) return (void *) lambda;
