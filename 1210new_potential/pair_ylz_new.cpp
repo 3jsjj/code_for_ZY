@@ -15,7 +15,7 @@
    Contributing author: Hongyan Yuan (SUSTech)
 ------------------------------------------------------------------------- */
 
-#include "pair_ylz.h"
+#include "pair_ylz_new.h"
 
 #include "atom.h"
 #include "atom_vec_ellipsoid.h"
@@ -450,7 +450,7 @@ double PairYLZ::ylz_analytic(const int i, const int j, double a1[3][3], double a
 
   double ni1[3], nj1[3], dphi_drhat[3], dUdrhat[3], dUdni1[3], dUdnj1[3];
   double dphi_dni1[3], dphi_dnj1[3];
-  double t, t1, t2, t4, cos_t, U, uR, uA, dUdr, dUdphi;
+  double t, t1, t2, t4, f_t, U, uR, uA, dUdr, dfdr, dUdphi;
   const double energy_well = epsilon[type[i]][type[j]];
   const double rmin = MY_TWOBYSIXTH * sigma[type[i]][type[j]];
   const double rcut = cut[type[i]][type[j]];
