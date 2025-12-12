@@ -497,9 +497,9 @@ double PairYLZ_new::ylz_new_analytic(const int i, const int j, double a1[3][3], 
     L= rcut - rmin;
     l= 0.5 * (rcut + rmin);
     t = (r-l);
-    f_t=(2/L/L/L)*t*t*t - (3/2/L)*t + 0.5;
+    f_t=(2.0/L/L/L)*t*t*t - (1.5/L)*t + 0.5;
     t1 = f_t;
-    dfdr = (6/L/L/L)*t*t - (3/2/L);
+    dfdr = (6.0/L/L/L)*t*t - (1.5/L);
 
     for (int k = 1; k <= zt - 2; k++) t1 *= f_t;    // get f()^(zt-1) zt>=2
 
