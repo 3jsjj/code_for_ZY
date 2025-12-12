@@ -492,10 +492,10 @@ double PairYLZ_new::ylz_new_analytic(const int i, const int j, double a1[3][3], 
     uR = (t4 - 2.0 * t2) * energy_well;
     U = uR + (1.0 - phi) * energy_well;
     dUdr = 4.0 * (t2 - t4) / r * energy_well;
-    dUdphi = -energy_well;
+    dUdphi = - energy_well;
   } else {
-    L=rcut - rmin;
-    l=0.5*(rcut + rmin);
+    L= rcut - rmin;
+    l= 0.5 * (rcut + rmin);
     t = (r-l);
     f_t=(2/L/L/L)*t*t*t - (3/2/L)*t + 0.5;
     t1 = f_t;
